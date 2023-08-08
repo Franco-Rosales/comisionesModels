@@ -6,7 +6,7 @@ import IconButton from '@mui/material/IconButton'
 import Icon from 'src/@core/components/icon'
 
 // ** Components
-import ModeToggler from 'src/@core/layouts/components/shared-components/ModeToggler'
+
 import UserDropdown from 'src/@core/layouts/components/shared-components/UserDropdown'
 
 const AppBarContent = props => {
@@ -22,7 +22,7 @@ const AppBarContent = props => {
           </IconButton>
         ) : null}
 
-        <ModeToggler settings={settings} saveSettings={saveSettings} />
+
       </Box>
       <Box className='actions-right' sx={{ display: 'flex', alignItems: 'center' }}>
         <UserDropdown settings={settings} />
