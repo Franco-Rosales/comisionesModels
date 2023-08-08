@@ -15,3 +15,10 @@ class User(UserCreate):
   
   class Config:
     orm_mode = True
+
+
+
+
+
+
+

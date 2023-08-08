@@ -1,30 +1,55 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi_jwt_auth import AuthJWT
+from models.user import UserModel
+from utils.auth import create_user, verify_usr_email, authenticate_user
 from schemas.user import UserCreate, UserLogin
 from db import db_dependency
-from utils.auth import create_user, veryfy_usr_email
-from fastapi_jwt_auth import AuthJWT
+from sqlalchemy.orm.session import Session
+from pydantic.typing import Annotated
+from fastapi_jwt_auth.exceptions import AuthJWTException
+
+
 
 router_auth = APIRouter(
-    tags=["Authentications"],
-    prefix="/auth",
+  tags=['Authentication'],
+  prefix='/auth'
 )
 
-@router_auth.get('/register')
-async def register(user: UserCreate, db: db_dependency):
-    await create_user(db,user )
-    return {"message": "User created successfully"}
+#*################### AUTHENTICATION ######################
+#*        Ruta para autenticar usuario                    #
+#*#########################################################
 
-@router_auth.get('/veryfy_email/{token}')
-def veryfy(token:str, usr_email: str, db: db_dependency):
-    veryfy_usr_email(db, usr_email, token)
-    return {"message": "User veryfied successfully"}
 
-@router_auth.get('/login')
-def login(user:UserLogin, db: db_dependency, Authorize: AuthJWT = Depends()):
-    pass
+@router_auth.post('/register')
+async def register( user: UserCreate, db: db_dependency ):
+  await create_user(db, user)
+  return 'ok'
+
+@router_auth.get('/verify_email/{token}')
+def verify( token: str, usr_email:str, db: db_dependency):
+  verify_usr_email(token, usr_email, db)
+  return 'ok'
+
+@router_auth.post('/login')
+def login( user: UserLogin, db: db_dependency, Authorize: AuthJWT = Depends() ):
+  
+  user_db = authenticate_user(user, db)
+  
+  another_claims = {"role": [user_db.usr_role]}
+  access_token = Authorize.create_access_token(subject=user_db.usr_id, user_claims=another_claims)
+  refresh_token = Authorize.create_refresh_token(subject=user_db.usr_id, user_claims=another_claims)
+  
+  Authorize.set_access_cookies(access_token)
+  Authorize.set_refresh_cookies(refresh_token)
+  return 'login exitoso'
 
 @router_auth.delete('/logout')
 def logout(Authorize: AuthJWT = Depends()):
   Authorize.jwt_required()
   Authorize.unset_jwt_cookies()
   return {"msg":"Successfully logout"}
+
+
+
+
+
