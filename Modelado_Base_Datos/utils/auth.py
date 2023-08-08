@@ -5,7 +5,7 @@ from passlib.context import CryptContext
 from sqlalchemy.orm import Session
 from jose import JWTError, jwt, ExpiredSignatureError
 from config.enviroments import ALGORITHM, SECRET_KEY
-from models.user import UserModel
+from Models.user import UserModel
 from schemas.user import UserCreate, UserLogin
 from datetime import datetime, timedelta
 
