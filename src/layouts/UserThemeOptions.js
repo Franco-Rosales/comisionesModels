@@ -1,26 +1,27 @@
 // ** To use core palette, uncomment the below import
-// import { PaletteMode } from '@mui/material'
+ import { PaletteMode } from '@mui/material'
 // ** To use core palette, uncomment the below import
-// import corePalette from 'src/@core/theme/palette'
+ import corePalette from 'src/@core/theme/palette'
 // ** To use mode (light/dark/semi-dark), skin(default/bordered), direction(ltr/rtl), etc. for conditional styles, uncomment below line
-// import { useSettings } from 'src/@core/hooks/useSettings'
+ import { useSettings } from 'src/@core/hooks/useSettings'
 const UserThemeOptions = () => {
   // ** To use mode (light/dark/semi-dark), skin(default/bordered), direction(ltr/rtl), etc. for conditional styles, uncomment below line
   // const { settings } = useSettings()
   // ** To use mode (light/dark/semi-dark), skin(default/bordered), direction(ltr/rtl), etc. for conditional styles, uncomment below line
-  // const { mode, skin } = settings
+  //const { mode, skin } = settings
   // ** To use core palette, uncomment the below line
   // const palette = corePalette(mode as PaletteMode, skin)
   return {
-    /*
+    
     palette:{
       primary: {
-        light: '#8479F2',
-        main: '#7367F0',
-        dark: '#655BD3',
+        light: '#5FB4E6',
+        main: '#5FB4E6',
+        dark: '#5FB4E6',
         contrastText: '#FFF'
       }
-    },
+    }, 
+    /*
     breakpoints: {
       values: {
         xs: 0,
