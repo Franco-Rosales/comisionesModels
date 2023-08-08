@@ -5,26 +5,34 @@ const navigation = () => [
     icon: 'tabler:smart-home',
   },
   {
-    title: 'Productos',
-    path: '/productos',
-    icon: 'tabler:smart-home',
+    title: 'Historial de Cobranzas',
+    path: '/cobranza',
+    icon: 'tabler:users',
   },
   {
-    title: 'Servicios',
-    path: '/servicios',
-    icon: 'tabler:smart-home',
+    title: 'Producto',
+    path: '/producto',
+    icon: 'tabler:users',
+  },
+  {
+    title: 'Servicio',
+    path: '/servicio',
+    icon: 'tabler:file-report',
   },
   {
     title: 'Parametros',
     path: '/parametros',
-    icon: 'tabler:mail',
-  },
-  {
-    path: '/acl',
-    action: 'read',
-    subject: 'acl-page',
-    title: 'Access Control',
-    icon: 'tabler:shield',
+    icon: 'tabler:file-dollar',
+    children: [
+      {
+        title: 'Porcentaje a aplicar',
+        path: '/apps/roles'
+      },
+      {
+        title: 'Rentabilidad objetivo',
+        path: '/apps/permissions'
+      }
+    ]
   }
 ]
 

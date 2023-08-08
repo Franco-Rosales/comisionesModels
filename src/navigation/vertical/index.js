@@ -2,31 +2,36 @@ const navigation = () => {
   return [
     {
       title: 'Importar',
-      path: '/importar',
+      path: '/home',
       icon: 'tabler:smart-home',
     },
     {
+      title: 'Historial de Cobranzas',
+      path: '/acl',
+      icon: 'tabler:users',
+    },
+    {
       title: 'Producto',
-      path: '/producto',
+      path: '/second-page',
       icon: 'tabler:users',
     },
     {
       title: 'Servicio',
-      path: '/servicio',
+      path: '/misc/coming-soon',
       icon: 'tabler:file-report',
     },
     {
       title: 'Parametros',
-      path: '/parametros',
+      path: '/misc/coming-soon',
       icon: 'tabler:file-dollar',
       children: [
         {
           title: 'Porcentaje a aplicar',
-          path: '/apps/roles'
+          path: '/misc/coming-soon',
         },
         {
           title: 'Rentabilidad objetivo',
-          path: '/apps/permissions'
+          path: '/misc/coming-soon',
         }
       ]
     }
