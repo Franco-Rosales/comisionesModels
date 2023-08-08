@@ -47,7 +47,7 @@ const VerticalNavHeader = props => {
     collapsedNavWidth,
     toggleNavVisibility,
     navigationBorderWidth,
-    menuLockedIcon: userMenuLockedIcon,
+    //menuLockedIcon: userMenuLockedIcon,
     navMenuBranding: userNavMenuBranding,
     menuUnlockedIcon: userMenuUnlockedIcon
   } = props
@@ -68,7 +68,7 @@ const VerticalNavHeader = props => {
       return 4.5
     }
   }
-  const MenuLockedIcon = () => userMenuLockedIcon || <Icon icon='tabler:circle-dot' />
+  //const MenuLockedIcon = () => userMenuLockedIcon || <Icon icon='tabler:circle-dot' />
   const MenuUnlockedIcon = () => userMenuUnlockedIcon || <Icon icon='tabler:circle' />
 
   return (
@@ -119,7 +119,7 @@ const VerticalNavHeader = props => {
         </LinkStyled>
       )}
 
-      {hidden ? (
+      {/* {hidden ? (
         <IconButton
           disableRipple
           disableFocusRipple
@@ -149,7 +149,7 @@ const VerticalNavHeader = props => {
         >
           {navCollapsed ? MenuUnlockedIcon() : MenuLockedIcon()}
         </IconButton>
-      )}
+      )} */}
     </MenuHeaderWrapper>
   )
 }
