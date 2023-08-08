@@ -44,7 +44,7 @@ const UserLayout = ({ children, contentHeightFixed }) => {
   const AppBrand = () => {
     return (
       <Box sx={{ display: 'flex', alignItems: 'center' }}>
-        <img src='/images/navigation-menu/logotipo-turbolab.svg' alt='logo' width="180" height="70" />
+        <img src='/images/navigation-menu/logotipo-turbolab.svg' alt='logo' width="100%" height="70" />
       </Box>
     )
   }
@@ -55,17 +55,21 @@ const UserLayout = ({ children, contentHeightFixed }) => {
       settings={settings}
       saveSettings={saveSettings}
       contentHeightFixed={contentHeightFixed}
+      footerProps={{
+        sx: { p: 5, backgroundColor: theme => theme.palette.background.paper },
+        content: () => ' '
+      }}
       verticalLayoutProps={{
         navMenu: {
           navItems: VerticalNavItems(),
-          branding: () => <AppBrand />
+          branding: () => <AppBrand />,
           // Uncomment the below line when using server-side menu in vertical layout and comment the above line
           // navItems: verticalMenuItems
         },
         appBar: {
           content: props => (
             <VerticalAppBarContent
-              hidden={hidden}
+               hidden={hidden}
               settings={settings}
               saveSettings={saveSettings}
               toggleNavVisibility={props.toggleNavVisibility}
@@ -76,19 +80,20 @@ const UserLayout = ({ children, contentHeightFixed }) => {
       {...(settings.layout === 'horizontal' && {
         horizontalLayoutProps: {
           navMenu: {
-            navItems: HorizontalNavItems()
-
+            navItems: HorizontalNavItems(),
+            
+            
             // Uncomment the below line when using server-side menu in horizontal layout and comment the above line
             // navItems: horizontalMenuItems
           },
           appBar: {
-            content: () => <HorizontalAppBarContent settings={settings} saveSettings={saveSettings} />
+            content: () => <HorizontalAppBarContent  hidden={hidden} settings={settings} saveSettings={saveSettings} />
           }
         }
       })}
     >
       {children}
-      
+
     </Layout>
   )
 }
