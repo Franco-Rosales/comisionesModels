@@ -5,7 +5,7 @@ from passlib.context import CryptContext
 from sqlalchemy.orm import Session
 from jose import JWTError, jwt, ExpiredSignatureError
 from config.enviroments import ALGORITHM, SECRET_KEY
-from models.user import UserModel
+from Models.user import UserModel
 from schemas.user import UserCreate, UserLogin
 from datetime import datetime, timedelta
 
@@ -40,6 +40,8 @@ async def send_email(token: str, usr_email: str):
   
   verification_url = f"http://localhost:8000/auth/verify_email/{token}?usr_email={usr_email}"
   
+  #TODO: cambiar el template por el que nos de Gero
+  #despues del OK de que se verifique, mostrar segundo template html con otro link a home ya logueado
   template = f"""
     <html>
       <body>
@@ -50,8 +52,7 @@ async def send_email(token: str, usr_email: str):
       </html>
     """
   message = MessageSchema(
-    subject="Bienvenido a Capa",
-    # List of recipients, as many as you can pass
+    subject="Bienvenido a Comisiones!",
     recipients=[usr_email],
     body=template,
     subtype="html",

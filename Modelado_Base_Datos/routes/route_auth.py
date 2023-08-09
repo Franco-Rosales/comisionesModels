@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi_jwt_auth import AuthJWT
-from models.user import UserModel
+from Models.user import UserModel
 from utils.auth import create_user, verify_usr_email, authenticate_user
 from schemas.user import UserCreate, UserLogin
 from db import db_dependency
