@@ -87,7 +87,8 @@
     "eslint-import-resolver-alias": "1.1.2",
     "eslint-import-resolver-typescript": "3.5.3",
     "eslint-plugin-import": "2.27.5",
-    "prettier": "2.8.4"
+    "prettier": "2.8.4",
+    "typescript": "5.1.6"
   },
   "resolutions": {
     "minipass": "4.2.5",

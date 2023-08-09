@@ -2,7 +2,7 @@ const navigation = () => {
   return [
     {
       title: 'Importar',
-      path: '/home',
+      path: '/import',
       icon: 'tabler:smart-home',
     },
     {
