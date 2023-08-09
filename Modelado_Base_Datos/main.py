@@ -6,10 +6,10 @@ from fastapi_jwt_auth.exceptions import AuthJWTException
 from fastapi_jwt_auth import AuthJWT
 from schemas.settings import Settings
 from db import create_tables
-from utils.auth import get_current_user, get_current_user_with_role
 
 app = FastAPI()
 
+#rutas
 app.include_router(router_auth)
 
 

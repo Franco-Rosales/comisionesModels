@@ -4,6 +4,7 @@ from fastapi_mail import ConnectionConfig, FastMail, MessageSchema
 from passlib.context import CryptContext
 from sqlalchemy.orm import Session
 from jose import JWTError, jwt, ExpiredSignatureError
+from Modelado_Base_Datos.schemas.email import EmailSchema
 from config.enviroments import ALGORITHM, SECRET_KEY
 from Models.user import UserModel
 from schemas.user import UserCreate, UserLogin
@@ -26,7 +27,7 @@ def verify_password(plain_password, hash_password):
 #*################### send_email ######################
 #*     configuracion para envio de email              #
 #*##################################################### 
-async def send_email(token: str, usr_email: str):
+async def send_email(token: str, usr_email: EmailSchema):
   
   conf = ConnectionConfig(
     MAIL_USERNAME="pilcapa2023@gmail.com",
@@ -50,9 +51,8 @@ async def send_email(token: str, usr_email: str):
       </html>
     """
   message = MessageSchema(
-    subject="Bienvenido a Capa",
-    # List of recipients, as many as you can pass
-    recipients=[usr_email],
+    subject="Bienvenido a Comisiones",
+    recipients=usr_email.dict().get("email"),
     body=template,
     subtype="html",
   )
@@ -71,7 +71,7 @@ async def create_user(db: Session, user: UserCreate):
   if usr_email:
     raise HTTPException(
       status_code=status.HTTP_400_BAD_REQUEST, 
-      detail="Email registrado"
+      detail="Email ya registrado"
     )
 
   hashed_password = get_password_hash(user.usr_password)
@@ -82,9 +82,10 @@ async def create_user(db: Session, user: UserCreate):
   db.commit()
   db.refresh(db_user)
   
+  #token de email
   token = create_verify_token( 
     db_user.usr_id, 
-    timedelta(minutes=2)
+    timedelta(minutes=10)
   )
   
   await send_email(token, user.usr_email)

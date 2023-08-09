@@ -8,8 +8,6 @@ from sqlalchemy.orm.session import Session
 from pydantic.typing import Annotated
 from fastapi_jwt_auth.exceptions import AuthJWTException
 
-
-
 router_auth = APIRouter(
   tags=['Authentication'],
   prefix='/auth'
@@ -23,12 +21,13 @@ router_auth = APIRouter(
 @router_auth.post('/register')
 async def register( user: UserCreate, db: db_dependency ):
   await create_user(db, user)
-  return 'ok'
+  return {'msg' : 'register successful'}
 
 @router_auth.get('/verify_email/{token}')
 def verify( token: str, usr_email:str, db: db_dependency):
   verify_usr_email(token, usr_email, db)
-  return 'ok'
+  #TODO: al hacer click y todo sale bien, redireccionar a un html y luego al home
+  return  {'msg' : 'verify successful'}
 
 @router_auth.post('/login')
 def login( user: UserLogin, db: db_dependency, Authorize: AuthJWT = Depends() ):
