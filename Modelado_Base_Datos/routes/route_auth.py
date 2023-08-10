@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi_jwt_auth import AuthJWT
-from Models.user import UserModel
+from models.user import UserModel
 from utils.auth import create_user, verify_usr_email, authenticate_user
 from schemas.user import UserCreate, UserLogin
 from db import db_dependency
@@ -19,16 +19,18 @@ router_auth = APIRouter(
 #*        Ruta para autenticar usuario                    #
 #*#########################################################
 
+#TODO: un endpoint solo para enviar el mail 1 (para reenviar), posiblemente un endpoint
+#para enable user y enviar mail 2
 
 @router_auth.post('/register')
 async def register( user: UserCreate, db: db_dependency ):
   await create_user(db, user)
-  return 'ok'
+  return {'msg': 'register successful'}
 
 @router_auth.get('/verify_email/{token}')
 def verify( token: str, usr_email:str, db: db_dependency):
   verify_usr_email(token, usr_email, db)
-  return 'ok'
+  return {'msg': 'email verified'}
 
 @router_auth.post('/login')
 def login( user: UserLogin, db: db_dependency, Authorize: AuthJWT = Depends() ):
@@ -41,7 +43,7 @@ def login( user: UserLogin, db: db_dependency, Authorize: AuthJWT = Depends() ):
   
   Authorize.set_access_cookies(access_token)
   Authorize.set_refresh_cookies(refresh_token)
-  return 'login exitoso'
+  return {'msg': 'login successful'}
 
 @router_auth.delete('/logout')
 def logout(Authorize: AuthJWT = Depends()):
