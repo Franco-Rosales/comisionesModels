@@ -10,13 +10,19 @@ import axios from 'axios'
 // ** Config
 import authConfig from 'src/configs/auth'
 
+// ** Services Imports
+import { postRegister } from 'src/services/register'
+
+
 // ** Defaults
 const defaultProvider = {
   user: null,
   loading: true,
+  error: null,
   setUser: () => null,
   setLoading: () => Boolean,
   login: () => Promise.resolve(),
+  register: () => Promise.resolve(),
   logout: () => Promise.resolve()
 }
 const AuthContext = createContext(defaultProvider)
@@ -25,7 +31,7 @@ const AuthProvider = ({ children }) => {
   // ** States
   const [user, setUser] = useState(defaultProvider.user)
   const [loading, setLoading] = useState(defaultProvider.loading)
-
+  const [error, setError] = useState(defaultProvider.error)
   // ** Hooks
   const router = useRouter()
   useEffect(() => {
@@ -79,6 +85,30 @@ const AuthProvider = ({ children }) => {
       })
   }
 
+  const register = async data => {
+
+    try {
+
+      setLoading(true)
+
+      await postRegister(data)
+
+    } catch (err) {
+
+      console.error(err) // Agregar esta línea para ver el error en la consola
+
+      setLoading(false)
+
+      setError(err.response?.data?.detail || 'Internal server error')
+
+    } finally {
+
+      setLoading(false)
+
+    }
+
+  }
+
   const handleLogout = () => {
     setUser(null)
     window.localStorage.removeItem('userData')
@@ -92,7 +122,8 @@ const AuthProvider = ({ children }) => {
     setUser,
     setLoading,
     login: handleLogin,
-    logout: handleLogout
+    logout: handleLogout,
+    register: register
   }
 
   return <AuthContext.Provider value={values}>{children}</AuthContext.Provider>
