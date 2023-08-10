@@ -8,6 +8,7 @@ from config.enviroments import ALGORITHM, SECRET_KEY
 from Models.user import UserModel
 from schemas.user import UserCreate, UserLogin
 from datetime import datetime, timedelta
+from config.enviroments import MAIL_USERNAME, MAIL_PASSWORD, MAIL_SERVER
 
 
 
@@ -26,32 +27,37 @@ def verify_password(plain_password, hash_password):
 #*################### send_email ######################
 #*     configuracion para envio de email              #
 #*##################################################### 
-async def send_email(token: str, usr_email: str):
+async def send_email_verificacion(token: str, usr_email: str):
   
   conf = ConnectionConfig(
-    MAIL_USERNAME="pilcapa2023@gmail.com",
-    MAIL_PASSWORD="ofmmifkfjjtwqyfq",
+    MAIL_USERNAME=MAIL_USERNAME,
+    MAIL_PASSWORD=MAIL_PASSWORD,
     MAIL_PORT=587,
-    MAIL_SERVER="smtp.gmail.com",
+    MAIL_SERVER=MAIL_SERVER,
     MAIL_STARTTLS=True,
     MAIL_SSL_TLS=False,
-    MAIL_FROM="pilcapa2023@gmail.com",
+    MAIL_FROM=MAIL_USERNAME,
   )
   
   verification_url = f"http://localhost:8000/auth/verify_email/{token}?usr_email={usr_email}"
   
-  template = f"""
-    <html>
-      <body>
-        <p>Hola,</p>
-        <p>Gracias por registrarte. Haz clic en el siguiente enlace para verificar tu cuenta:</p>
-        <p><a href="{verification_url}">verificar</a></p>
-      </body>
-      </html>
-    """
+  #TODO: cambiar el template por el que nos de Gero
+  #despues del OK de que se verifique, mostrar segundo template html con otro link AL LOGIN, NO AL HOME
+  # template = f"""
+  #   <html>
+  #     <body>
+  #       <p>Hola,</p>
+  #       <p>Gracias por registrarte. Haz clic en el siguiente enlace para verificar tu cuenta:</p>
+  #       <p><a href="{verification_url}">verificar</a></p>
+  #     </body>
+  #     </html>
+  #   """
+
+  with open('\templates\confirm.html', 'r', encoding='utf-8') as f:
+    template = f.read()
+
   message = MessageSchema(
-    subject="Bienvenido a Capa",
-    # List of recipients, as many as you can pass
+    subject="Bienvenido a Comisiones!",
     recipients=[usr_email],
     body=template,
     subtype="html",
@@ -60,7 +66,7 @@ async def send_email(token: str, usr_email: str):
   await fm.send_message(message)
 #*#####################################################
   
-  
+#otra funcion para que envie el segundo mail que va a estar triggereada en el boton de verificar
     
 #*################### Create an User #####################
 #*        logica de creacion de usuario                  #
@@ -87,7 +93,7 @@ async def create_user(db: Session, user: UserCreate):
     timedelta(minutes=2)
   )
   
-  await send_email(token, user.usr_email)
+  await send_email_verificacion(token, user.usr_email)
   return db_user
 #*########################################################
     
