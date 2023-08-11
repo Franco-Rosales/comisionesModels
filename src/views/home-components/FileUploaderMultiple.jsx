@@ -5,14 +5,21 @@ import { Fragment, useState } from 'react'
 // ** MUI Imports
 
 import Box from '@mui/material/Box'
+//import List from '@mui/material/List'
 import Button from '@mui/material/Button'
+//import ListItem from '@mui/material/ListItem'
 import Typography from '@mui/material/Typography'
+//import IconButton from '@mui/material/IconButton'
 import { styled, useTheme } from '@mui/material/styles'
 import { TextField } from '@mui/material'
 
+// ** Icon Imports
+import Icon from 'src/@core/components/icon'
 
 // ** Third Party Imports
 import { useDropzone } from 'react-dropzone'
+//import { red } from '@mui/material/colors'
+import BasicModal from './ModalHome'
 
 // Styled component for the upload image inside the dropzone area
 const Img = styled('img')(({ theme }) => ({
@@ -24,6 +31,8 @@ const Img = styled('img')(({ theme }) => ({
 const FileUploaderMultiple = () => {
   // ** State
   const [files, setFiles] = useState([])
+  const [open, setOpen] = useState(false);
+  const [name, setName] = useState('');
 
   // ** Hooks
   const theme = useTheme()
@@ -33,6 +42,13 @@ const FileUploaderMultiple = () => {
       setFiles(acceptedFiles.map(file => Object.assign(file)))
     }
   })
+
+  const onSubmit = (e) => {
+    e.preventDefault()
+    setOpen(true)
+  }
+
+
 
   const TextArea = () => {
     return (
@@ -50,7 +66,13 @@ const FileUploaderMultiple = () => {
         <Typography
           variant='h6'
           component='h2'
-          sx={{ width: '80%', textAlign: 'left', fontWeight: 'light', fontSize: '1.2rem', mt: '1rem' }}
+          sx={{
+            width: '80%',
+            textAlign: 'left',
+            fontWeight: 'light',
+            fontSize: '1.2rem',
+            mt: '1rem'
+          }}
         >
           Nombre del Documento
         </Typography>
@@ -65,16 +87,15 @@ const FileUploaderMultiple = () => {
     )
   }
 
-
   return (
     <Fragment>
+      <form onSubmit={onSubmit}>
       <TextArea />
       <div {...getRootProps({ className: 'dropzone' })}>
         <input {...getInputProps()} />
         <Box
           sx={{
             width: '100%',
-            height: '75vh',
             display: 'flex',
             textAlign: 'center',
             alignItems: 'center',
@@ -85,7 +106,7 @@ const FileUploaderMultiple = () => {
           <Box
             sx={{
               mt: '3rem',
-              border: '.15rem dotted #D8D6DE',
+              border: '.15rem dashed #D8D6DE',
               width: '80%',
               height: '20rem'
             }}
@@ -96,18 +117,57 @@ const FileUploaderMultiple = () => {
                 textAlign: 'center',
                 alignItems: 'center',
                 flexDirection: 'column',
-                pb: '3rem'
+                pt: '7rem'
               }}
             >
-              <Img alt='Upload img' src={`/images/misc/upload-${theme.palette.mode}.png`} sx={{ mt: 25, color: '#3A6DB3' }}  />
-              <Typography variant='h5' sx={{ mb: 30 }}>
+              <Box
+                sx={{
+                  color: '#ffff',
+                  backgroundColor: '#3A6DB3',
+                  borderRadius: '14%',
+                  p: 3.1,
+                  pl: 3.5,
+                  pr: 3.5,
+                  widht: '4rem',
+                  height: '4rem',
+                  textAlign: 'center',
+                 
+                }}
+              >
+                <Icon icon='tabler:upload' fontSize={40} />
+              </Box>
+              <Typography variant='h5' sx={{ mb: 30, mt: 5 }}>
                 Cargar Archivo
               </Typography>
-              <Button variant='contained'>Importar Archivo</Button>
             </Box>
           </Box>
         </Box>
       </div>
+      <Box
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          gap: '.5rem'
+        }}
+      >
+        
+        <Button
+          variant='contained'
+          type='submit'
+          sx={{
+            mt: 10,
+            backgroundColor: '#3A6DB3',
+            '&:hover': { backgroundColor: '#5a7396' }
+          }}
+        >
+          Importar Archivo
+        </Button>
+        <BasicModal open={open} setOpen={setOpen} />
+      </Box>
+      
+      
+      </form>
     </Fragment>
   )
 }
