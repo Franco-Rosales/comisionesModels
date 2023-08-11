@@ -1,13 +1,10 @@
 from fastapi import HTTPException,status
 from fastapi_mail import FastMail, MessageSchema, ConnectionConfig
-from typing import List
 from models.user import UserModel
 from config.environments import *
 from config.prod import *
-import jwt
-from sqlalchemy.orm import Session
 import os
-from datetime import date, timedelta, datetime
+
 
 #TODO: hacerlo variables de entorno
 conf = ConnectionConfig(

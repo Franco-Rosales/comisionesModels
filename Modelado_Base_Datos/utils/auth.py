@@ -90,8 +90,7 @@ async def create_user(db: Session, user: UserCreate):
   #creo token de verificacion de email
   token = create_verify_token( 
     db_user.usr_id, 
-    #TODO: cuantos min?
-    timedelta(minutes=60)
+    timedelta(minutes=15)
   )
   
   await send_email_confirm(user, token)

@@ -1,18 +1,19 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-  </head>
+  <head> </head>
   <body style="background-color: rgba(247, 247, 247, 0.932)">
     <div
       style="
         position: absolute;
-        margin-top: 1%;
+        margin-top: 2%;
         margin-bottom: 5%;
         margin-left: 25%;
         margin-right: 25%;
         border-radius: 6px;
-        width: 400px;
+        width: 0px;
+        height: 810px;
+        flex-shrink: 0;
+        margin-bottom: 10px;
       "
     >
       <div
@@ -20,12 +21,14 @@
           position: absolute;
           justify-content: center;
           background-color: #ffffff;
-          width: 480px;
-          margin-left: 130px;
-          height: 650px;
+          width: 580px;
+          padding-left: 30px;
+          padding-right: 10px;
+          padding-top: 5px;
+          margin: 5%;
         "
       >
-        <div style="background-color: #ffffff; margin: 5%; width: 430px;">
+        <div style="background-color: #ffffff; margin: 5%; width: 450px">
           <h1
             style="
               font-family: Arial;
@@ -36,17 +39,17 @@
               font-style: normal;
               font-weight: 500;
               font-size: 18px;
-              line-height: 22px;
-              color: #5e5873;
+              line-height: 12px;
+              color: var(--1-theme-color-body-text, #6E6B7B);
+              font-feature-settings: 'clig' off, 'liga' off;
             "
           >
-            Hola <b>{{name}}, 👋</b>
+            Hola <b>{{name}} 👋</b>
           </h1>
-          <pre
+          <h4
             style="
               font-family: Arial;
-              margin-left: -122px;
-              margin-bottom: -19px;
+              height: 22px;
               left: 0%;
               right: 0.49%;
               top: calc(50% - 22px / 2 + 21px);
@@ -54,20 +57,19 @@
               font-weight: 500;
               font-size: 18px;
               line-height: 22px;
-              color: #5e5873;
+              color: #6E6B7B;
             "
           >
-                        <b>🏆 Bienvenido a la plataforma de Comisiones - Vates!</b>
-                        </pre
-          >
-          
+          <p style="margin-bottom: 10px">🏆 Bienvenido a la plataforma de Comisiones - Vates!</p>
+          </h4>
           <img
           src="./images/Illustration-welcome.svg"
             alt=""
             style="
-            margin-left: auto;
+            margin-top: 50px;
+            margin-left: 100px;
             margin-right: auto;
-            display: block;
+           
             "
           />
           <p
@@ -84,8 +86,20 @@
               line-height: 21px;
               color: #6e6b7b;
               padding: 5px;
-              margin-bottom: 0px;
+              margin-top: 100px;
               text-align: justify;
+              
+              font-family: Arial;
+              height: 22px;
+              left: 0%;
+              right: 44.12%;
+              top: calc(50% - 22px / 2 - 21px);
+              font-style: normal;
+              font-weight: 500;
+              line-height: 12px;
+              color: var(--1-theme-color-body-text, #6E6B7B);
+              font-feature-settings: 'clig' off, 'liga' off;
+          
             "
           >
           Ya puedes ingresar a la plataforma. <br>
@@ -99,25 +113,26 @@
           <a
             style="
               display: block;
-              width: 158px;
-              padding: 8px 30px;
-              margin-bottom: 15px;
+              width: 170px;
+              padding: 8px 20px;
+              
               font-family: Arial, Helvetica, sans-serif;
               font-weight: 500;
               border-radius: 5px;
               background-color: #3A6DB3;
               color: #ffffff;
               text-decoration: none;
-              margin-top:22px;
+              margin-bottom: 50px;
+              margin-top: 50px;
             "
             href="http://localhost:3000/login"
             >Explorar Comisiones ➜</a
           >
-          <hr style="margin-top: 3em;" width="400", align="center" />
+          <hr  width="500", align="center" color="#EBE9F1" />
           
           <footer style="margin-top: 7em;">
             <img src="./images/Socail.svg" alt="footer redes sociales">
-          </div>
+          </footer>
         </div>
       </div>
     </div>
