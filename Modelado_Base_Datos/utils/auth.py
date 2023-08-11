@@ -23,9 +23,9 @@ def verify_password(plain_password, hash_password):
   
   
 
-#*################### Create an User #####################
-#*        logica de creacion de usuario                  #
-#*########################################################
+#*################### Create an User ####################################
+#*        logica de creacion de usuario                                 #
+#*######################################################################
 async def create_user(db: Session, user: UserCreate):
   usr_email = db.query(UserModel).filter(UserModel.usr_email == user.usr_email).first() 
 
@@ -45,7 +45,8 @@ async def create_user(db: Session, user: UserCreate):
   
   #creo token de verificacion de email
   token = create_verify_token( 
-    db_user.usr_id, 
+    db_user.usr_email,
+    db_user.usr_id,
     timedelta(minutes=15)
   )
   
@@ -59,17 +60,19 @@ async def create_user(db: Session, user: UserCreate):
 #*        Verificar email de usuario                     #
 #*########################################################
 
-async def verify_usr_email(token: str, user: UserModel, db: Session):
+async def verify_usr_email(token: str, db: Session):
   try:
     payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
     usr_id = payload['id']
-      
+    usr_mail = payload['mail']
+    
+    print("paso por aqui")
+
     user_db = db.query(UserModel).filter_by(usr_id = usr_id).first()
     
-    if not user_db.usr_enabled:
-      user_db.usr_enabled = True
-      db.add(user_db)
-      db.commit()
+    user_db.usr_enabled = True
+    db.add(user_db)
+    db.commit()
 
     if not user_db:
       raise HTTPException(
@@ -77,10 +80,11 @@ async def verify_usr_email(token: str, user: UserModel, db: Session):
         detail="Usuario no encontrado",
       )
     
-    await send_email_welcome(user)
+    await send_email_welcome(user_db)
+    print("se mando el otro mail")
 
   except ExpiredSignatureError:
-    user_delete = db.query(UserModel).filter_by(usr_email=user.usr_email).first()  
+    user_delete = db.query(UserModel).filter_by(usr_email=usr_mail).first()  
     db.delete(user_delete)
     db.commit()
     raise HTTPException(
@@ -92,7 +96,7 @@ async def verify_usr_email(token: str, user: UserModel, db: Session):
     raise HTTPException(
       status_code=status.HTTP_401_UNAUTHORIZED,
       detail="Error de authenticacion",
-    )
+   )
 #*########################################################
 
 
@@ -100,8 +104,8 @@ async def verify_usr_email(token: str, user: UserModel, db: Session):
 #*################### Create Verify user email ##############
 #*        creacion del token de email_verification          #
 #*###########################################################
-def create_verify_token( usr_id: int, expires_delta: timedelta):
-  encode = {"id": usr_id}
+def create_verify_token( usr_email: str, usr_id: int, expires_delta: timedelta):
+  encode = {"id": usr_id, "mail": usr_email}
   expires_delta = datetime.utcnow() + expires_delta
   encode.update({"exp": expires_delta})
   return jwt.encode(encode, SECRET_KEY, algorithm=ALGORITHM)

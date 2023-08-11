@@ -12,5 +12,5 @@ TEMPLATE_CONFIRM = "confirm.html"
 TEMPLATE_WELCOME = "welcome.html"
 
 #RUTA DE ACCESO A ENDPOINTS
-DNS_VERIFICATION= "http://localhost:3000/auth/verify_email/"
-DNS_LOGIN = "http://localhost:3000/auth/login"
+DNS_VERIFICATION= "http://localhost:8000/auth/verify_email/"
+DNS_LOGIN = "http://localhost:8000/auth/login"

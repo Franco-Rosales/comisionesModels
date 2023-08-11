@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException
-from Modelado_Base_Datos.utils.notify import send_email_confirm
+from models.user import UserModel
+from utils.notify import send_email_confirm
 from fastapi_jwt_auth import AuthJWT
 from utils.auth import create_user, verify_usr_email, authenticate_user
 from schemas.user import UserCreate, UserLogin
@@ -20,19 +21,21 @@ async def register( user: UserCreate, db: db_dependency ):
   await create_user(db, user)
   return {'msg': 'register successful'}
 
+#file response con html su cuenta ha sido verificada
 @router_auth.get('/verify_email/{token}')
-def verify( token: str, usr_email:str, db: db_dependency):
-  verify_usr_email(token, usr_email, db)
+async def verify( token: str, db: db_dependency):
+  await verify_usr_email(token, db)
   return {'msg': 'email verified'}
 
+#TODO: arreglar
 #dos opciones: front me pase todo el user, o solo el email y hago un get de BBDD
-@router_auth.get('/resend_email/{user}')
-async def resend_email(user:UserCreate):
-  try:
-    send_email_confirm(user.usr_email)  # Llama a la función para enviar el correo
-    return {"msg": "Correo reenviado con éxito"}
-  except Exception as e:
-    return HTTPException(status_code=500, detail=str(e))
+# @router_auth.get('/resend_email/{user}')
+# async def resend_email(user:UserCreate):
+#   try:
+#     send_email_confirm(user.usr_email)  # Llama a la función para enviar el correo
+#     return {"msg": "Correo reenviado con éxito"}
+#   except Exception as e:
+#     return HTTPException(status_code=500, detail=str(e))
 
 @router_auth.post('/login')
 def login( user: UserLogin, db: db_dependency, Authorize: AuthJWT = Depends() ):
