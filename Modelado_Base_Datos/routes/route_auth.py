@@ -1,14 +1,10 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException
+from Modelado_Base_Datos.utils.notify import send_email_confirm
 from fastapi_jwt_auth import AuthJWT
-from models.user import UserModel
 from utils.auth import create_user, verify_usr_email, authenticate_user
 from schemas.user import UserCreate, UserLogin
 from db import db_dependency
-from sqlalchemy.orm.session import Session
-from pydantic.typing import Annotated
 from fastapi_jwt_auth.exceptions import AuthJWTException
-
-
 
 router_auth = APIRouter(
   tags=['Authentication'],
@@ -19,9 +15,6 @@ router_auth = APIRouter(
 #*        Ruta para autenticar usuario                    #
 #*#########################################################
 
-#TODO: un endpoint solo para enviar el mail 1 (para reenviar), posiblemente un endpoint
-#para enable user y enviar mail 2
-
 @router_auth.post('/register')
 async def register( user: UserCreate, db: db_dependency ):
   await create_user(db, user)
@@ -31,6 +24,15 @@ async def register( user: UserCreate, db: db_dependency ):
 def verify( token: str, usr_email:str, db: db_dependency):
   verify_usr_email(token, usr_email, db)
   return {'msg': 'email verified'}
+
+#dos opciones: front me pase todo el user, o solo el email y hago un get de BBDD
+@router_auth.get('/resend_email/{user}')
+async def resend_email(user:UserCreate):
+  try:
+    send_email_confirm(user.usr_email)  # Llama a la función para enviar el correo
+    return {"msg": "Correo reenviado con éxito"}
+  except Exception as e:
+    return HTTPException(status_code=500, detail=str(e))
 
 @router_auth.post('/login')
 def login( user: UserLogin, db: db_dependency, Authorize: AuthJWT = Depends() ):

@@ -1,6 +1,5 @@
 from fastapi_jwt_auth import AuthJWT
 from fastapi import Depends, HTTPException, status
-from fastapi_mail import ConnectionConfig, FastMail, MessageSchema
 from passlib.context import CryptContext
 from sqlalchemy.orm import Session
 from jose import JWTError, jwt, ExpiredSignatureError
@@ -9,7 +8,7 @@ from models.user import UserModel
 from schemas.user import UserCreate, UserLogin
 from datetime import datetime, timedelta
 from utils.notify import send_email_confirm
-
+from utils.notify import send_email_welcome
 
 
 #*################### HASHING PASSWORD WITH BCRYPT ####################
@@ -21,52 +20,9 @@ def get_password_hash(password):
 def verify_password(plain_password, hash_password):
   return bcrypt_context.verify(plain_password, hash_password)
 #*#####################################################################
-    
-    
+  
+  
 
-#*################### send_email ######################
-#*     configuracion para envio de email              #
-#*##################################################### 
-# async def send_email_verificacion(token: str, usr_email: str):
-  
-#   conf = ConnectionConfig(
-#     MAIL_USERNAME=MAIL_USERNAME,
-#     MAIL_PASSWORD=MAIL_PASSWORD,
-#     MAIL_PORT=587,
-#     MAIL_SERVER=MAIL_SERVER,
-#     MAIL_STARTTLS=True,
-#     MAIL_SSL_TLS=False,
-#     MAIL_FROM=MAIL_USERNAME,
-#   )
-  
-#   verification_url = f"http://localhost:8000/auth/verify_email/{token}?usr_email={usr_email}"
-  
-#   #TODO: cambiar el template por el que nos de Gero
-#   #despues del OK de que se verifique, mostrar segundo template html con otro link AL LOGIN, NO AL HOME
-#   template = f"""
-#     <html>
-#       <body>
-#         <p>Hola,</p>
-#         <p>Gracias por registrarte. Haz clic en el siguiente enlace para verificar tu cuenta:</p>
-#         <p><a href="{verification_url}">verificar</a></p>
-#       </body>
-#       </html>
-#     """
-
-#   # with open('\templates\confirm.html', 'r', encoding='utf-8') as f:
-#   #   template = f.read()
-
-#   message = MessageSchema(
-#     subject="Bienvenido a Comisiones!",
-#     recipients=[usr_email],
-#     body=template,
-#     subtype="html",
-#   )
-#   fm = FastMail(conf)
-#   await fm.send_message(message)
-#*#####################################################
-  
-    
 #*################### Create an User #####################
 #*        logica de creacion de usuario                  #
 #*########################################################
@@ -96,32 +52,35 @@ async def create_user(db: Session, user: UserCreate):
   await send_email_confirm(user, token)
   return db_user
 #*########################################################
-    
-    
-    
+
+
+
 #*################### Verify user email ##################
 #*        Verificar email de usuario                     #
 #*########################################################
-#TODO: verificar que no este ya enenabled
-def verify_usr_email(token: str, usr_email: str, db: Session):
+
+async def verify_usr_email(token: str, user: UserModel, db: Session):
   try:
     payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
     usr_id = payload['id']
       
     user_db = db.query(UserModel).filter_by(usr_id = usr_id).first()
     
-    user_db.usr_enabled = True
-    db.add(user_db)
-    db.commit()
-    
+    if not user_db.usr_enabled:
+      user_db.usr_enabled = True
+      db.add(user_db)
+      db.commit()
+
     if not user_db:
       raise HTTPException(
         status_code=status.HTTP_404_NOT_FOUND,
         detail="Usuario no encontrado",
       )
     
+    await send_email_welcome(user)
+
   except ExpiredSignatureError:
-    user_delete = db.query(UserModel).filter_by(usr_email=usr_email).first()  
+    user_delete = db.query(UserModel).filter_by(usr_email=user.usr_email).first()  
     db.delete(user_delete)
     db.commit()
     raise HTTPException(
@@ -174,6 +133,11 @@ def authenticate_user( user: UserLogin, db: Session):
   return user_db
 #*#############################################################
 
+
+
+#*################### ROLES OF USER ##########################
+#*                logica de roles de usuario                  #
+#*#############################################################
 def get_current_user_with_role(role: str):
     def _get_current_user(user_id: int = Depends(get_current_user), auth: AuthJWT = Depends()):
       try:
@@ -191,6 +155,9 @@ def get_current_user_with_role(role: str):
           )
       return user_id
     return _get_current_user
+#*#############################################################
+
+
 
 #*################### OBTENER USER ############################
 #*  Obtener user del token e implementacion de refreshToken   #
