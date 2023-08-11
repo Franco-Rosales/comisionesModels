@@ -78,7 +78,6 @@ const FileUploaderMultiple = () => {
         </Typography>
         <TextField
           id='outlined'
-          defaultValue='Nombre del documento'
           placeholder='Nombre del documento'
           size='small'
           sx={{ width: '80%' }}
