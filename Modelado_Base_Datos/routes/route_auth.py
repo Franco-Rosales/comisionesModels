@@ -1,8 +1,8 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends
 from models.user import UserModel
-from utils.notify import send_email_confirm
+from starlette import status
 from fastapi_jwt_auth import AuthJWT
-from utils.auth import create_user, verify_usr_email, authenticate_user
+from utils.auth import *
 from schemas.user import UserCreate, UserLogin
 from db import db_dependency
 from fastapi_jwt_auth.exceptions import AuthJWTException
@@ -16,28 +16,23 @@ router_auth = APIRouter(
 #*        Ruta para autenticar usuario                    #
 #*#########################################################
 
-@router_auth.post('/register')
+@router_auth.post('/register', status_code=status.HTTP_201_CREATED)
 async def register( user: UserCreate, db: db_dependency ):
   await create_user(db, user)
-  return {'msg': 'register successful'}
+  #return {'msg': 'register successful'}
 
 #file response con html su cuenta ha sido verificada
-@router_auth.get('/verify_email/{token}')
+@router_auth.get('/verify_email/{token}',  status_code=status.HTTP_200_OK)
 async def verify( token: str, db: db_dependency):
   await verify_usr_email(token, db)
-  return {'msg': 'email verified'}
+  #return {'msg': 'email verified'}
 
-#TODO: arreglar
-#dos opciones: front me pase todo el user, o solo el email y hago un get de BBDD
-# @router_auth.get('/resend_email/{user}')
-# async def resend_email(user:UserCreate):
-#   try:
-#     send_email_confirm(user.usr_email)  # Llama a la función para enviar el correo
-#     return {"msg": "Correo reenviado con éxito"}
-#   except Exception as e:
-#     return HTTPException(status_code=500, detail=str(e))
 
-@router_auth.post('/login')
+@router_auth.get('/resend_email',  status_code=status.HTTP_200_OK)
+async def resend_email(usr_id:int, db: db_dependency):
+  await resend_email_confirm(usr_id, db)
+
+@router_auth.post('/login',  status_code=status.HTTP_200_OK)
 def login( user: UserLogin, db: db_dependency, Authorize: AuthJWT = Depends() ):
   
   user_db = authenticate_user(user, db)
@@ -48,13 +43,13 @@ def login( user: UserLogin, db: db_dependency, Authorize: AuthJWT = Depends() ):
   
   Authorize.set_access_cookies(access_token)
   Authorize.set_refresh_cookies(refresh_token)
-  return {'msg': 'login successful'}
+  #return {'msg': 'login successful'}
 
-@router_auth.delete('/logout')
+@router_auth.delete('/logout',  status_code=status.HTTP_200_OK)
 def logout(Authorize: AuthJWT = Depends()):
   Authorize.jwt_required()
   Authorize.unset_jwt_cookies()
-  return {"msg":"Successfully logout"}
+  #return {"msg":"Successfully logout"}
 
 
 

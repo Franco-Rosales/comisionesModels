@@ -20,13 +20,13 @@ conf = ConnectionConfig(
     TEMPLATE_FOLDER = os.getcwd() + TEMPLATE_ROUTE
 )
 
-async def send_email_confirm(instance: UserModel, token: str):
+async def send_email_confirm(user: UserModel, token: str):
 
     message = MessageSchema(
         subject="Bienvenido a Comisiones!",
-        recipients=[instance.usr_email],
+        recipients=[user.usr_email],
         #el template body pasa parametros al html para q los use
-        template_body={"name":instance.usr_name, "email":instance.usr_email, "token":token, "DNS_VERIFICATION":DNS_VERIFICATION},
+        template_body={"name":user.usr_name, "email":user.usr_email, "token":token, "DNS_VERIFICATION":DNS_VERIFICATION},
         subtype="html"
     )
 
@@ -45,3 +45,4 @@ async def send_email_welcome(instance: UserModel):
 
     fm = FastMail(conf)
     await fm.send_message(message=message, template_name=TEMPLATE_WELCOME)
+

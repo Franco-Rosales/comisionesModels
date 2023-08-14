@@ -64,9 +64,7 @@ async def verify_usr_email(token: str, db: Session):
   try:
     payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
     usr_id = payload['id']
-    usr_mail = payload['mail']
-    
-    print("paso por aqui")
+    usr_email = payload['mail']
 
     user_db = db.query(UserModel).filter_by(usr_id = usr_id).first()
     
@@ -81,10 +79,9 @@ async def verify_usr_email(token: str, db: Session):
       )
     
     await send_email_welcome(user_db)
-    print("se mando el otro mail")
 
   except ExpiredSignatureError:
-    user_delete = db.query(UserModel).filter_by(usr_email=usr_mail).first()  
+    user_delete = db.query(UserModel).filter_by(usr_email=usr_email).first()  
     db.delete(user_delete)
     db.commit()
     raise HTTPException(
@@ -97,6 +94,42 @@ async def verify_usr_email(token: str, db: Session):
       status_code=status.HTTP_401_UNAUTHORIZED,
       detail="Error de authenticacion",
    )
+  
+
+async def resend_email_confirm(usr_email: str, db: Session):
+  #crear un nuevo token y pisarlo al anterior
+  try:
+    db_user = db.query(UserModel).filter_by(usr_email = usr_email).first()
+    
+    if not db_user:
+      raise HTTPException(
+        status_code=status.HTTP_404_NOT_FOUND,
+        detail="Usuario no encontrado",
+      )
+    
+    token = create_verify_token( 
+    db_user.usr_email,
+    db_user.usr_id,
+    timedelta(minutes=15)
+    )
+
+    #enviar mail
+    await send_email_confirm(db_user, token)
+
+  except ExpiredSignatureError:
+    user_delete = db.query(UserModel).filter_by(usr_email=db_user.usr_mail).first()  
+    db.delete(user_delete)
+    db.commit()
+    raise HTTPException(
+      status_code=status.HTTP_406_NOT_ACCEPTABLE,
+      detail="Su registro ha expirado, por favor registrese nuevamente",
+    )
+  
+  except JWTError:
+    raise HTTPException(
+      status_code=status.HTTP_401_UNAUTHORIZED,
+      detail="Error de authenticacion",
+    )
 #*########################################################
 
 
@@ -142,23 +175,23 @@ def authenticate_user( user: UserLogin, db: Session):
 #*################### ROLES OF USER ##########################
 #*                logica de roles de usuario                  #
 #*#############################################################
-def get_current_user_with_role(role: str):
-    def _get_current_user(user_id: int = Depends(get_current_user), auth: AuthJWT = Depends()):
-      try:
-        auth.jwt_required()
-        role_cookie=auth.get_raw_jwt()['role']
-        if role not in role_cookie:
-            raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Usuario no autorizado"
-          )
-      except:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Usuario no autorizado"
-          )
-      return user_id
-    return _get_current_user
+# def get_current_user_with_role(role: str):
+#     def _get_current_user(user_id: int = Depends(get_current_user), auth: AuthJWT = Depends()):
+#       try:
+#         auth.jwt_required()
+#         role_cookie=auth.get_raw_jwt()['role']
+#         if role not in role_cookie:
+#             raise HTTPException(
+#             status_code=status.HTTP_401_UNAUTHORIZED,
+#             detail="Usuario no autorizado"
+#           )
+#       except:
+#         raise HTTPException(
+#             status_code=status.HTTP_401_UNAUTHORIZED,
+#             detail="Usuario no autorizado"
+#           )
+#       return user_id
+#     return _get_current_user
 #*#############################################################
 
 
