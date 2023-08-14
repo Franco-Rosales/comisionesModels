@@ -23,55 +23,9 @@ def verify_password(plain_password, hash_password):
   
   
 
-<<<<<<< HEAD
 #*################### Create an User ####################################
 #*        logica de creacion de usuario                                 #
 #*######################################################################
-=======
-#*################### send_email ######################
-#*     configuracion para envio de email              #
-#*##################################################### 
-async def send_email(token: str, usr_email: str):
-  
-  conf = ConnectionConfig(
-    MAIL_USERNAME="pilcapa2023@gmail.com",
-    MAIL_PASSWORD="ofmmifkfjjtwqyfq",
-    MAIL_PORT=587,
-    MAIL_SERVER="smtp.gmail.com",
-    MAIL_STARTTLS=True,
-    MAIL_SSL_TLS=False,
-    MAIL_FROM="pilcapa2023@gmail.com",
-  )
-  
-  verification_url = f"http://localhost:8000/auth/verify_email/{token}?usr_email={usr_email}"
-  
-  #TODO: cambiar el template por el que nos de Gero
-  #despues del OK de que se verifique, mostrar segundo template html con otro link a home ya logueado
-  template = f"""
-    <html>
-      <body>
-        <p>Hola,</p>
-        <p>Gracias por registrarte. Haz clic en el siguiente enlace para verificar tu cuenta:</p>
-        <p><a href="{verification_url}">verificar</a></p>
-      </body>
-      </html>
-    """
-  message = MessageSchema(
-    subject="Bienvenido a Comisiones!",
-    recipients=[usr_email],
-    body=template,
-    subtype="html",
-  )
-  fm = FastMail(conf)
-  await fm.send_message(message)
-#*#####################################################
-  
-  
-    
-#*################### Create an User #####################
-#*        logica de creacion de usuario                  #
-#*########################################################
->>>>>>> e4621aa (todo regio)
 async def create_user(db: Session, user: UserCreate):
   usr_email = db.query(UserModel).filter(UserModel.usr_email == user.usr_email).first() 
 
